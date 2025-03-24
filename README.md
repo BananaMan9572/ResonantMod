@@ -61,7 +61,7 @@ If you want to build the mod from source, follow these steps:
 ### Prerequisites
 - **Visual Studio 2022**: Download and install [Visual Studio](https://visualstudio.microsoft.com/).
 - **.NET Framework**: Ensure you have the .NET Framework installed (required for KSP mods).
-- **KSP Assembly References**: You’ll need references to KSP’s core assemblies (e.g., `Assembly-CSharp.dll`, `UnityEngine.dll`). These can be found in your KSP installation directory under `KSP_Data/Managed/`.
+- **KSP Assembly References**: You’ll need references to KSP’s core assemblies. These can be found in your KSP installation directory under `KSP_Data/Managed/`.
 
 ### Steps
 1. **Clone the Repository**:
