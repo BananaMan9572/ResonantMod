@@ -14,9 +14,9 @@ public class ResonantMod : MonoBehaviour
     private string errorMessage = string.Empty;
     private bool isMoon = false;
 
-    private string altitudeText = "";
+    private string altitudeText = string.Empty;
     private float altitude;
-    private string numberOfSatsText = "";
+    private string numberOfSatsText = string.Empty;
     private int numberOfSats;
 
     private float periapsis;
