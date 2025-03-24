@@ -40,7 +40,7 @@ Resonant Orbit Calculator is a mod for KSP that is designed to help calculate re
 
 ---
 
-## What it should look like
+## What it should look like _(as of v1.0)_
 
 ![example](https://github.com/user-attachments/assets/04335942-e753-4f72-a3c7-308dab594118)
 
@@ -60,7 +60,7 @@ If you want to build the mod from source, follow these steps:
 
 ### Prerequisites
 - **Visual Studio 2022**: Download and install [Visual Studio](https://visualstudio.microsoft.com/).
-- **.NET Framework**: Ensure you have the .NET Framework installed (required for KSP mods).
+- **.NET Framework**: Ensure you have the .NET Framework installed.
 - **KSP Assembly References**: You’ll need references to KSP’s core assemblies. These can be found in your KSP installation directory under `KSP_Data/Managed/`.
 
 ### Steps
