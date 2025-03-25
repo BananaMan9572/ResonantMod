@@ -97,7 +97,19 @@ public class ResonantMod : MonoBehaviour
             }
         }
 
-        selectedMoon = moons.Count > 0 ? moons[0] : null;
+        selectedMoon = (moons.Count > 0) ? moons[0] : null;
+    }
+
+    bool hasMoon(CelestialBody body)
+    {
+        foreach (CelestialBody moon in moons)
+        {
+            if (moon.referenceBody == body)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void ToggleGUI() => showGUI = !showGUI;
@@ -159,7 +171,7 @@ public class ResonantMod : MonoBehaviour
         GUILayout.BeginVertical(GUI.skin.box);
         GUILayout.Label($"Periapsis: {periapsis} km");
         GUILayout.Label($"Apoapsis: {apoapsis} km");
-        GUILayout.Label($"Injection dV: {injection} m/s");
+        GUILayout.Label($"Injection ΔV: {injection} m/s");
         GUILayout.EndVertical();
         GUILayout.EndVertical();
     }
@@ -192,7 +204,22 @@ public class ResonantMod : MonoBehaviour
 
         if (isMoon)
         {
-            if (GUILayout.Button(selectedMoon?.bodyName ?? "Select Moon", GUILayout.Width(width / 2 - 10)))
+            string buttonText;
+
+            if(selectedMoon == null && hasMoon(selectedBody))
+            {
+                buttonText = "Select Moon";
+            }
+            else if (hasMoon(selectedBody))
+            {
+                buttonText = selectedMoon.bodyName;
+            }
+            else
+            {
+                buttonText = "No moons";
+            }
+
+            if (GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10)))
             {
                 showMoonDropdown = !showMoonDropdown;
                 showPlanetDropdown = false;
@@ -214,10 +241,6 @@ public class ResonantMod : MonoBehaviour
             if (isMoon)
             {
                 PopulateMoons();
-                if (moons.Count == 0)
-                {
-                    errorMessage = "This planet has no moons!";
-                }
             }
             else
             {
@@ -263,10 +286,18 @@ public class ResonantMod : MonoBehaviour
                     selected = body;
                     showDropdown = false;
 
-                    if (isMoon && selectedMoon != null)
+                    if (bodies == planets)
                     {
-                        selectedBody = selectedMoon.referenceBody;
+                        selectedBody = selected;
+                        selectedMoon = null;
+                        PopulateMoons();
                     }
+                    else if (bodies == moons)
+                    {
+                        selectedMoon = selected;
+                    }
+
+                    errorMessage = string.Empty;
                 }
             }
 
