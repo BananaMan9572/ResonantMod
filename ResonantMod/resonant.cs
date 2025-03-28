@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using KSP.UI.Screens;
 using UnityEngine;
 
-[KSPAddon(KSPAddon.Startup.Flight, false)]
+[KSPAddon(KSPAddon.Startup.FlightEditorAndKSC, false)]
 public class ResonantMod : MonoBehaviour
 {
     private ApplicationLauncherButton appButton;
     private bool showGUI = false;
     private Rect windowRect = new Rect(300, 200, 600, 300);
+    private bool isGUIHidden = false;
 
     private string errorMessage = string.Empty;
     private bool isMoon = false;
@@ -41,11 +42,24 @@ public class ResonantMod : MonoBehaviour
     void Start()
     {
         GameEvents.onGUIApplicationLauncherReady.Add(AddAppButton);
+        GameEvents.onHideUI.Add(OnHideGUI);
+        GameEvents.onShowUI.Add(OnShowGUI);
         PopulatePlanets();
+    }
+
+    private void OnHideGUI()
+    {
+        isGUIHidden = false;
+    }
+    private void OnShowGUI()
+    {
+        isGUIHidden = true;
     }
 
     void OnDestroy()
     {
+        GameEvents.onHideUI.Remove(OnHideGUI);
+        GameEvents.onShowUI.Remove(OnShowGUI);
         GameEvents.onGUIApplicationLauncherReady.Remove(AddAppButton);
         if (appButton != null)
         {
@@ -66,7 +80,7 @@ public class ResonantMod : MonoBehaviour
                 null, 
                 null, 
                 null,
-                ApplicationLauncher.AppScenes.FLIGHT,
+                ApplicationLauncher.AppScenes.ALWAYS,
                 iconTexture
             );
         }
@@ -75,7 +89,7 @@ public class ResonantMod : MonoBehaviour
     void PopulatePlanets()
     {
         planets.Clear();
-        
+
         if(FlightGlobals.Bodies == null)
         {
             Debug.LogWarning("[ResonantMod] FlightGlobals.Bodies is null. (main menu?)");
@@ -130,7 +144,7 @@ public class ResonantMod : MonoBehaviour
 
     void OnGUI()
     {
-        if (showGUI)
+        if (showGUI && !isGUIHidden)
         {
             windowRect = GUI.Window(9572, windowRect, DrawGUI, "ResonantMod");
 
@@ -186,9 +200,11 @@ public class ResonantMod : MonoBehaviour
     void DrawRightSection(float width)
     {
         // Start main vertical group
-        GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(width));
+        GUILayout.BeginVertical();
+
 
         // Calculation results section
+        GUILayout.BeginVertical(GUI.skin.box);
         GUILayout.Label("Calculation Results:", GUILayout.ExpandWidth(false));
         GUILayout.BeginVertical(GUI.skin.box);
         GUILayout.Label($"Periapsis: {periapsis} km");
@@ -196,16 +212,15 @@ public class ResonantMod : MonoBehaviour
         GUILayout.Label($"Injection ΔV: {injection} ms⁻¹");
         GUILayout.EndVertical();
         GUILayout.EndVertical();
-
         // Debug section (only if enabled)
         if (showDebug)
         {
-
+            GUILayout.Space(5);
+            GUILayout.BeginVertical(GUI.skin.box);
+            GUILayout.Label("Debug Info:", GUILayout.ExpandWidth(false));
             if (bodyToUse != null)
             {
-                GUILayout.BeginVertical(GUI.skin.box);
-                GUILayout.Space(5);
-                GUILayout.Label("Debug Info:", GUILayout.ExpandWidth(false));
+                
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label($"Selected body: {bodyToUse.bodyName}");
                 GUILayout.Label($"μ: {(float)bodyToUse.gravParameter:E3} m³s⁻²");
@@ -213,12 +228,12 @@ public class ResonantMod : MonoBehaviour
                 GUILayout.Label($"Body Radius: {(float)bodyToUse.Radius:E3} m");
                 GUILayout.Label($"Semi-major axis: {(float)smaResonant:E3} m");
                 GUILayout.EndVertical();
-                GUILayout.EndVertical();
-            }
+            } 
             else
             {
                 GUILayout.Label("Do a calculation first!");
             }
+            GUILayout.EndVertical();
 
         }
         GUILayout.EndVertical();
