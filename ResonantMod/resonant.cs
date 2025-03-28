@@ -8,11 +8,11 @@ public class ResonantMod : MonoBehaviour
 {
     private ApplicationLauncherButton appButton;
     private bool showGUI = false;
-    private Rect windowRect = new Rect(300, 200, 600, 270);
-    private Texture2D lineTexture;
+    private Rect windowRect = new Rect(300, 200, 600, 300);
 
     private string errorMessage = string.Empty;
     private bool isMoon = false;
+    private bool showDebug = false;
 
     private string altitudeText = string.Empty;
     private float altitude;
@@ -22,6 +22,12 @@ public class ResonantMod : MonoBehaviour
     private float periapsis;
     private float apoapsis;
     private float injection;
+
+
+    // For calculations
+    private double gm;
+    double smaResonant;
+    CelestialBody bodyToUse;
 
     private List<CelestialBody> planets = new List<CelestialBody>();
     private List<CelestialBody> moons = new List<CelestialBody>();
@@ -36,10 +42,6 @@ public class ResonantMod : MonoBehaviour
     {
         GameEvents.onGUIApplicationLauncherReady.Add(AddAppButton);
         PopulatePlanets();
-
-        lineTexture = new Texture2D(1, 1);
-        lineTexture.SetPixel(0, 0, new Color(0.5f, 0.5f, 0.5f, 1f));
-        lineTexture.Apply();
     }
 
     void OnDestroy()
@@ -58,7 +60,12 @@ public class ResonantMod : MonoBehaviour
         {
             Texture2D iconTexture = GameDatabase.Instance.GetTexture("ResonantMod/icon", false);
             appButton = ApplicationLauncher.Instance.AddModApplication(
-                ToggleGUI, ToggleGUI, null, null, null, null,
+                ToggleGUI, 
+                ToggleGUI, 
+                null, 
+                null, 
+                null, 
+                null,
                 ApplicationLauncher.AppScenes.FLIGHT,
                 iconTexture
             );
@@ -68,6 +75,13 @@ public class ResonantMod : MonoBehaviour
     void PopulatePlanets()
     {
         planets.Clear();
+        
+        if(FlightGlobals.Bodies == null)
+        {
+            Debug.LogWarning("[ResonantMod] FlightGlobals.Bodies is null. (main menu?)");
+            return;
+        }
+
         foreach (CelestialBody body in FlightGlobals.Bodies)
         {
             if (body.referenceBody != null && body.referenceBody.isStar)
@@ -100,7 +114,7 @@ public class ResonantMod : MonoBehaviour
         selectedMoon = (moons.Count > 0) ? moons[0] : null;
     }
 
-    bool hasMoon(CelestialBody body)
+    bool HasMoon(CelestialBody body)
     {
         foreach (CelestialBody moon in moons)
         {
@@ -139,6 +153,11 @@ public class ResonantMod : MonoBehaviour
             showGUI = false;
         }
 
+        if (GUI.Button(new Rect(windowRect.width - 50, 2, 20, 15), showDebug ? "D" : "d"))
+        {
+            showDebug = !showDebug;
+        }
+
         DrawMainContent();
         GUI.DragWindow();
     }
@@ -166,13 +185,42 @@ public class ResonantMod : MonoBehaviour
 
     void DrawRightSection(float width)
     {
+        // Start main vertical group
         GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(width));
-        GUILayout.Label("Calculation Results");
+
+        // Calculation results section
+        GUILayout.Label("Calculation Results:", GUILayout.ExpandWidth(false));
         GUILayout.BeginVertical(GUI.skin.box);
         GUILayout.Label($"Periapsis: {periapsis} km");
         GUILayout.Label($"Apoapsis: {apoapsis} km");
-        GUILayout.Label($"Injection ΔV: {injection} m/s");
+        GUILayout.Label($"Injection ΔV: {injection} ms⁻¹");
         GUILayout.EndVertical();
+        GUILayout.EndVertical();
+
+        // Debug section (only if enabled)
+        if (showDebug)
+        {
+
+            if (bodyToUse != null)
+            {
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Space(5);
+                GUILayout.Label("Debug Info:", GUILayout.ExpandWidth(false));
+                GUILayout.BeginVertical(GUI.skin.box);
+                GUILayout.Label($"Selected body: {bodyToUse.bodyName}");
+                GUILayout.Label($"μ: {(float)bodyToUse.gravParameter:E3} m³s⁻²");
+                GUILayout.Label($"Body Mass: {(float)bodyToUse.Mass:E3} kg");
+                GUILayout.Label($"Body Radius: {(float)bodyToUse.Radius:E3} m");
+                GUILayout.Label($"Semi-major axis: {(float)smaResonant:E3} m");
+                GUILayout.EndVertical();
+                GUILayout.EndVertical();
+            }
+            else
+            {
+                GUILayout.Label("Do a calculation first!");
+            }
+
+        }
         GUILayout.EndVertical();
     }
 
@@ -192,10 +240,10 @@ public class ResonantMod : MonoBehaviour
     void DrawCelestialBodySelection(float width)
     {
         GUILayout.BeginVertical(GUI.skin.box);
-        GUILayout.Label("Select a planet:");
+        GUILayout.Label("Select a body:");
         GUILayout.BeginHorizontal();
 
-        if (GUILayout.Button(selectedBody?.bodyName ?? "Select Planet", GUILayout.Width(width / 2 - 10)))
+        if (GUILayout.Button(selectedBody?.bodyName ?? "Select Body", GUILayout.Width(width / 2 - 10)))
         {
             showPlanetDropdown = !showPlanetDropdown;
             showMoonDropdown = false;
@@ -206,11 +254,11 @@ public class ResonantMod : MonoBehaviour
         {
             string buttonText;
 
-            if(selectedMoon == null && hasMoon(selectedBody))
+            if(selectedMoon == null && HasMoon(selectedBody))
             {
                 buttonText = "Select Moon";
             }
-            else if (hasMoon(selectedBody))
+            else if (HasMoon(selectedBody))
             {
                 buttonText = selectedMoon.bodyName;
             }
@@ -322,18 +370,18 @@ public class ResonantMod : MonoBehaviour
             return;
         }
 
-        CelestialBody bodyToUse = isMoon ? selectedMoon : selectedBody;
+        bodyToUse = isMoon ? selectedMoon : selectedBody;
         if (bodyToUse == null)
         {
             errorMessage = "No celestial body selected.";
             return;
         }
 
-        double gm = bodyToUse.gravParameter;
+        gm = bodyToUse.gravParameter;
         double rTarget = bodyToUse.Radius + altitude * 1000;
         double tTarget = 2 * Math.PI * Math.Sqrt(Math.Pow(rTarget, 3) / gm);
         double tResonant = tTarget * (numberOfSats + 1) / numberOfSats;
-        double smaResonant = Math.Pow((tResonant * tResonant) * gm / (4 * Math.PI * Math.PI), 1.0 / 3.0);
+        smaResonant = Math.Pow((tResonant * tResonant) * gm / (4 * Math.PI * Math.PI), 1.0 / 3.0);
 
         double rPeriapsis = rTarget;
         double rApoapsis = 2 * smaResonant - rTarget;
