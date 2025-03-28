@@ -6,35 +6,38 @@ using UnityEngine;
 [KSPAddon(KSPAddon.Startup.FlightEditorAndKSC, false)]
 public class ResonantMod : MonoBehaviour
 {
+    // UI Control   
     private ApplicationLauncherButton appButton;
     private bool showGUI = false;
     private Rect windowRect = new Rect(300, 200, 600, 300);
     private bool isGUIHidden = false;
 
+    // Messages & Debug
     private string errorMessage = string.Empty;
-    private bool isMoon = false;
     private bool showDebug = false;
 
+    // User Input
     private string altitudeText = string.Empty;
     private float altitude;
     private string numberOfSatsText = string.Empty;
     private int numberOfSats;
 
+    // Orbit Calculation
     private float periapsis;
     private float apoapsis;
     private float injection;
-
-
-    // For calculations
     private double gm;
-    double smaResonant;
-    CelestialBody bodyToUse;
+    private double smaResonant;
+    private CelestialBody bodyToUse;
 
+    // Celestial Bodies
+    private bool isMoon = false;
     private List<CelestialBody> planets = new List<CelestialBody>();
     private List<CelestialBody> moons = new List<CelestialBody>();
     private CelestialBody selectedBody = null;
     private CelestialBody selectedMoon = null;
 
+    // Dropdown Controls
     private bool showPlanetDropdown = false;
     private bool showMoonDropdown = false;
     private Vector2 scrollPosition = Vector2.zero;
