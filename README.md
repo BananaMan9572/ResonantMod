@@ -1,4 +1,4 @@
-# Resonant Orbit Calculator
+# Resonant Mod
 
 Resonant Orbit Calculator is a mod for KSP that is designed to help calculate resonant target orbits for satellite constellations. It provides a tool for determining the required orbital paramters for a resonant orbit.
 
@@ -47,7 +47,7 @@ Resonant Orbit Calculator is a mod for KSP that is designed to help calculate re
 
 ## Contributing
 Contributions are asked for! Here's how you can help:
-1. **Reporting Issues**: If you find a bug or want a new feature, open an issue on the [Issues page](https://github.com/BananaMan9572/ResonantOrbitCalculator/issues)
+1. **Reporting Issues**: If you find a bug or want a new feature, open an issue on the [Issues page](https://github.com/BananaMan9572/ResonantMod/issues)
 2. **Submit Pull Requests**: Fork the repository, make changes, and submit a pull request.
 3. **Share Feedback**: Let me know how I can improve the mod.
 
@@ -80,7 +80,7 @@ If you want to build the mod from source, follow these steps:
 --- 
 
 # License
-Resonant Orbit Calculator is licensed under the **MIT License.** See the [LICENSE](https://github.com/BananaMan9572/ResonantOrbitCalculator/blob/master/LICENSE.txt) file for details.
+Resonant Orbit Calculator is licensed under the **MIT License.** See the [LICENSE](https://github.com/BananaMan9572/ResonantMod/blob/master/LICENSE.txt) file for details.
 
 ---
 
