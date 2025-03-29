@@ -1,6 +1,6 @@
 # Resonant Mod
 
-Resonant Orbit Calculator is a mod for KSP that is designed to help calculate resonant target orbits for satellite constellations. It provides a tool for determining the required orbital paramters for a resonant orbit.
+Resonant Mod is a mod for KSP that is designed to help calculate resonant target orbits for satellite constellations. It provides a tool for determining the required orbital paramters for a resonant orbit.
 
 - **Orbit Calculation** Computes paramaters for satellite constellations
 - **Dynamic Body Selection** Allows you to choose whatever planet or moon, no matter the star system.
@@ -13,7 +13,7 @@ Resonant Orbit Calculator is a mod for KSP that is designed to help calculate re
 - **Kerbal Space Program**: Ensure the game is installed.
 
 ### Steps
-1. Download the latest release of **Resonant Orbit Calculator** from the [Releases page](https://github.com/BananaMan9572/ResonantOrbitCalculator/releases).
+1. Download the latest release of **Resonant Mod** from the [Releases page](https://github.com/BananaMan9572/ResonantMod/releases).
 2. Extract the contents of the ZIP files.
 3. Copy the `ResonantMod` folder into your KSP's `GameData` directory.
 4. Launch KSP and the mod will be available in the flight scene.
