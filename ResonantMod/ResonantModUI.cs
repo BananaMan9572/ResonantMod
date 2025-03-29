@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ResonantMod
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.FlightEditorAndKSC, false)]
     internal class ResonantModUI : MonoBehaviour
     {
         private readonly ResonantOrbitCalculator calculator = new ResonantOrbitCalculator();
@@ -16,6 +16,8 @@ namespace ResonantMod
         private Rect windowRect = new Rect(300, 200, 600, 300);
         private bool isGUIHidden = false;
         private bool showDebug = false;
+        public string ErrorMessage { get; set; } = string.Empty;
+
 
         // Input Fields to Parse
         private string altitudeText = string.Empty;
@@ -26,12 +28,13 @@ namespace ResonantMod
         private bool showMoonDropdown = false;
         private Vector2 scrollPosition = Vector2.zero;
 
+        
         void Start()
         {
             GameEvents.onGUIApplicationLauncherReady.Add(AddAppButton);
             GameEvents.onHideUI.Add(OnHideGUI);
             GameEvents.onShowUI.Add(OnShowGUI);
-            bodyManager.PopulatePlanets();
+            bodyManager.PopulatePlanets(out ErrorMessage);
         }
 
         void OnDestroy()
@@ -112,12 +115,12 @@ namespace ResonantMod
             DrawRightSection(width);
             GUILayout.EndHorizontal();
 
-            if (!string.IsNullOrEmpty(bodyManager.ErrorMessage))
+            if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(10);
                 GUIStyle errorStyle = new GUIStyle(GUI.skin.label) { normal = { textColor = Color.red } };
-                GUILayout.Label(bodyManager.ErrorMessage, errorStyle, GUILayout.Width(580));
+                GUILayout.Label(ErrorMessage, errorStyle, GUILayout.Width(580));
                 GUILayout.EndHorizontal();
             }
 
@@ -171,7 +174,7 @@ namespace ResonantMod
             {
                 showPlanetDropdown = !showPlanetDropdown;
                 showMoonDropdown = false;
-                bodyManager.ErrorMessage = string.Empty;
+                ErrorMessage = string.Empty;
             }
 
             if (bodyManager.IsMoon)
@@ -184,7 +187,7 @@ namespace ResonantMod
                 {
                     showMoonDropdown = !showMoonDropdown;
                     showPlanetDropdown = false;
-                    bodyManager.ErrorMessage = string.Empty;
+                    ErrorMessage = string.Empty;
                 }
             }
 
@@ -237,7 +240,7 @@ namespace ResonantMod
                     {
                         selected = body;
                         showDropdown = false;
-                        bodyManager.ErrorMessage = string.Empty;
+                        ErrorMessage = string.Empty;
 
                         if (bodies == bodyManager.Planets)
                         {
@@ -255,26 +258,26 @@ namespace ResonantMod
         {
             if (!float.TryParse(altitudeText, out float altitude) || altitude < 0)
             {
-                bodyManager.ErrorMessage = "Invalid altitude value.";
+                ErrorMessage = "Invalid altitude value.";
                 return;
             }
 
             if (!int.TryParse(numberOfSatsText, out int numberOfSats) || numberOfSats < 3)
             {
-                bodyManager.ErrorMessage = "At least 3 satellites required.";
+                ErrorMessage = "At least 3 satellites required.";
                 return;
             }
 
             var targetBody = bodyManager.GetTargetBody();
             if (targetBody == null)
             {
-                bodyManager.ErrorMessage = "No celestial body selected.";
+                ErrorMessage = "No celestial body selected.";
                 return;
             }
 
             if (!calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error))
             {
-                bodyManager.ErrorMessage = error;
+                ErrorMessage = error;
             }
         }
     }

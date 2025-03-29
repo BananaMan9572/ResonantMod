@@ -12,15 +12,14 @@ namespace ResonantMod
 
         public CelestialBody SelectedMoon;
         public bool IsMoon { get; set; }
-        public string ErrorMessage { get; set; } = string.Empty;
 
-        public void PopulatePlanets()
+        public void PopulatePlanets(out string errorMessage)
         {
             Planets.Clear();
 
             if (FlightGlobals.Bodies == null)
             {
-                Debug.LogWarning("[ResonantMod] FlightGlobals.Bodies is null.");
+                errorMessage = "FlightGlobals.Bodies is null.";
                 return;
             }
 
@@ -34,8 +33,11 @@ namespace ResonantMod
 
             if (Planets.Count > 0)
             {
-                SelectedBody = Planets[0];
                 PopulateMoons();
+                errorMessage = string.Empty;
+            } else
+            {
+                errorMessage = "No planets found (how did you manage that?).";
             }
         }
 
