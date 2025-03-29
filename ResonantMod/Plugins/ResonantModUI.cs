@@ -16,7 +16,6 @@ namespace ResonantMod.Plugins {
         private bool showDebug = false;
         public string ErrorMessage { get; set; } = string.Empty;
 
-
         // Input Fields to Parse
         private string altitudeText = string.Empty;
         private string numberOfSatsText = string.Empty;
@@ -25,7 +24,6 @@ namespace ResonantMod.Plugins {
         private bool showPlanetDropdown = false;
         private bool showMoonDropdown = false;
         private Vector2 scrollPosition = Vector2.zero;
-
 
         void Start() {
             GameEvents.onGUIApplicationLauncherReady.Add(this.AddAppButton);
@@ -40,7 +38,9 @@ namespace ResonantMod.Plugins {
             GameEvents.onHideUI.Remove(this.OnHideGUI);
             GameEvents.onShowUI.Remove(this.OnShowGUI);
             GameEvents.onGUIApplicationLauncherReady.Remove(this.AddAppButton);
-            if(this.appButton != null)                 ApplicationLauncher.Instance.RemoveModApplication(this.appButton);
+            if(this.appButton != null) {
+                ApplicationLauncher.Instance.RemoveModApplication(this.appButton);
+            }
         }
 
         private void OnHideGUI() => this.isGUIHidden = true;
@@ -74,22 +74,26 @@ namespace ResonantMod.Plugins {
 
                 if(this.showMoonDropdown) {
                     this.DrawDropdown(this.bodyManager.Moons, ref this.bodyManager.SelectedMoon, ref this.showMoonDropdown,
-                               this.windowRect.x + this.windowRect.width / 2 + 10, this.windowRect.y + this.windowRect.height);
+                               this.windowRect.x + (this.windowRect.width / 2) + 10, this.windowRect.y + this.windowRect.height);
                 }
             }
         }
 
         void DrawGUI(int windowID) {
-            if(GUI.Button(new Rect(this.windowRect.width - 25, 2, 20, 15), "x"))                 this.showGUI = false;
+            if(GUI.Button(new Rect(this.windowRect.width - 25, 2, 20, 15), "x")) {
+                this.showGUI = false;
+            }
 
-            if(GUI.Button(new Rect(this.windowRect.width - 50, 2, 20, 15), this.showDebug ? "D" : "d"))                 this.showDebug = !this.showDebug;
+            if(GUI.Button(new Rect(this.windowRect.width - 50, 2, 20, 15), this.showDebug ? "D" : "d")) {
+                this.showDebug = !this.showDebug;
+            }
 
             this.DrawMainContent();
             GUI.DragWindow();
         }
 
         void DrawMainContent() {
-            float width = this.windowRect.width / 2 - 15;
+            float width = (this.windowRect.width / 2) - 15;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             this.DrawLeftSection(width);
@@ -108,9 +112,7 @@ namespace ResonantMod.Plugins {
         }
 
         void DrawRightSection(float width) {
-
             GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(width));
-
 
             GUILayout.Label("Calculation Results:", GUILayout.ExpandWidth(false));
             GUILayout.BeginVertical(GUI.skin.box);
@@ -136,8 +138,9 @@ namespace ResonantMod.Plugins {
             GUILayout.Label("Parameters");
             this.DrawCelestialBodySelection(width);
             this.DrawInputFields(width);
-            if(GUILayout.Button("Calculate", GUILayout.Width(70)))
+            if(GUILayout.Button("Calculate", GUILayout.Width(70))) {
                 this.CalculateOrbit();
+            }
             GUILayout.EndVertical();
         }
 
@@ -146,7 +149,7 @@ namespace ResonantMod.Plugins {
             GUILayout.Label("Select a body:");
             GUILayout.BeginHorizontal();
 
-            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width(width / 2 - 10))) {
+            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width((width / 2) - 10))) {
                 this.showPlanetDropdown = !this.showPlanetDropdown;
                 this.showMoonDropdown = false;
                 this.ErrorMessage = string.Empty;
@@ -157,7 +160,7 @@ namespace ResonantMod.Plugins {
                     ? this.bodyManager.SelectedMoon?.bodyName ?? "Select Moon"
                     : "No moons";
 
-                if(GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10))) {
+                if(GUILayout.Button(buttonText, GUILayout.Width((width / 2) - 10))) {
                     this.showMoonDropdown = !this.showMoonDropdown;
                     this.showPlanetDropdown = false;
                     this.ErrorMessage = string.Empty;
@@ -173,8 +176,9 @@ namespace ResonantMod.Plugins {
             if(this.bodyManager.IsMoon != previousIsMoon) {
                 this.showPlanetDropdown = false;
                 this.showMoonDropdown = false;
-                if(this.bodyManager.IsMoon)
+                if(this.bodyManager.IsMoon) {
                     this.bodyManager.PopulateMoons();
+                }
             }
 
             GUILayout.Space(8);
@@ -210,7 +214,9 @@ namespace ResonantMod.Plugins {
                         showDropdown = false;
                         this.ErrorMessage = string.Empty;
 
-                        if(bodies == this.bodyManager.Planets)                             this.bodyManager.PopulateMoons();
+                        if(bodies == this.bodyManager.Planets) {
+                            this.bodyManager.PopulateMoons();
+                        }
                     }
                 }
 
@@ -236,7 +242,9 @@ namespace ResonantMod.Plugins {
                 return;
             }
 
-            if(!this.calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error))                 this.ErrorMessage = error;
+            if(!this.calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error)) {
+                this.ErrorMessage = error;
+            }
         }
     }
 }

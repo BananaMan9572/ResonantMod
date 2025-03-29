@@ -19,7 +19,7 @@ namespace ResonantMod.Plugins {
             }
 
             foreach(CelestialBody body in FlightGlobals.Bodies) {
-                if(body.referenceBody != null && body.referenceBody.isStar)                     this.Planets.Add(body);
+                if(body.referenceBody != null && body.referenceBody.isStar) this.Planets.Add(body);
             }
 
             if(this.Planets.Count > 0) {
@@ -34,7 +34,7 @@ namespace ResonantMod.Plugins {
             this.Moons.Clear();
             if(this.SelectedBody != null) {
                 foreach(CelestialBody body in FlightGlobals.Bodies) {
-                    if(body.referenceBody == this.SelectedBody)                         this.Moons.Add(body);
+                    if(body.referenceBody == this.SelectedBody) this.Moons.Add(body);
                 }
             }
             this.SelectedMoon = this.Moons.Count > 0 ? this.Moons[0] : null;
