@@ -2,7 +2,7 @@
 using KSP.UI.Screens;
 using UnityEngine;
 
-namespace ResonantMod {
+namespace ResonantMod.Plugins {
     [KSPAddon(KSPAddon.Startup.FlightEditorAndKSC, false)]
     internal class ResonantModUI : MonoBehaviour {
         private readonly ResonantOrbitCalculator calculator = new ResonantOrbitCalculator();
@@ -40,9 +40,7 @@ namespace ResonantMod {
             GameEvents.onHideUI.Remove(this.OnHideGUI);
             GameEvents.onShowUI.Remove(this.OnShowGUI);
             GameEvents.onGUIApplicationLauncherReady.Remove(this.AddAppButton);
-            if(this.appButton != null) {
-                ApplicationLauncher.Instance.RemoveModApplication(this.appButton);
-            }
+            if(this.appButton != null)                 ApplicationLauncher.Instance.RemoveModApplication(this.appButton);
         }
 
         private void OnHideGUI() => this.isGUIHidden = true;
@@ -76,26 +74,22 @@ namespace ResonantMod {
 
                 if(this.showMoonDropdown) {
                     this.DrawDropdown(this.bodyManager.Moons, ref this.bodyManager.SelectedMoon, ref this.showMoonDropdown,
-                               this.windowRect.x + (this.windowRect.width / 2) + 10, this.windowRect.y + this.windowRect.height);
+                               this.windowRect.x + this.windowRect.width / 2 + 10, this.windowRect.y + this.windowRect.height);
                 }
             }
         }
 
         void DrawGUI(int windowID) {
-            if(GUI.Button(new Rect(this.windowRect.width - 25, 2, 20, 15), "x")) {
-                this.showGUI = false;
-            }
+            if(GUI.Button(new Rect(this.windowRect.width - 25, 2, 20, 15), "x"))                 this.showGUI = false;
 
-            if(GUI.Button(new Rect(this.windowRect.width - 50, 2, 20, 15), this.showDebug ? "D" : "d")) {
-                this.showDebug = !this.showDebug;
-            }
+            if(GUI.Button(new Rect(this.windowRect.width - 50, 2, 20, 15), this.showDebug ? "D" : "d"))                 this.showDebug = !this.showDebug;
 
             this.DrawMainContent();
             GUI.DragWindow();
         }
 
         void DrawMainContent() {
-            float width = (this.windowRect.width / 2) - 15;
+            float width = this.windowRect.width / 2 - 15;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             this.DrawLeftSection(width);
@@ -152,7 +146,7 @@ namespace ResonantMod {
             GUILayout.Label("Select a body:");
             GUILayout.BeginHorizontal();
 
-            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width((width / 2) - 10))) {
+            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width(width / 2 - 10))) {
                 this.showPlanetDropdown = !this.showPlanetDropdown;
                 this.showMoonDropdown = false;
                 this.ErrorMessage = string.Empty;
@@ -163,7 +157,7 @@ namespace ResonantMod {
                     ? this.bodyManager.SelectedMoon?.bodyName ?? "Select Moon"
                     : "No moons";
 
-                if(GUILayout.Button(buttonText, GUILayout.Width((width / 2) - 10))) {
+                if(GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10))) {
                     this.showMoonDropdown = !this.showMoonDropdown;
                     this.showPlanetDropdown = false;
                     this.ErrorMessage = string.Empty;
@@ -216,9 +210,7 @@ namespace ResonantMod {
                         showDropdown = false;
                         this.ErrorMessage = string.Empty;
 
-                        if(bodies == this.bodyManager.Planets) {
-                            this.bodyManager.PopulateMoons();
-                        }
+                        if(bodies == this.bodyManager.Planets)                             this.bodyManager.PopulateMoons();
                     }
                 }
 
@@ -244,9 +236,7 @@ namespace ResonantMod {
                 return;
             }
 
-            if(!this.calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error)) {
-                this.ErrorMessage = error;
-            }
+            if(!this.calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error))                 this.ErrorMessage = error;
         }
     }
 }
