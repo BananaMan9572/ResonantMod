@@ -29,21 +29,19 @@ namespace ResonantMod
         private Vector2 scrollPosition = Vector2.zero;
 
         
-        void Start()
-        {
+        void Start() {
             GameEvents.onGUIApplicationLauncherReady.Add(AddAppButton);
             GameEvents.onHideUI.Add(OnHideGUI);
             GameEvents.onShowUI.Add(OnShowGUI);
-            bodyManager.PopulatePlanets(out ErrorMessage);
+            bodyManager.PopulatePlanets(out string error);
+            if(!string.IsNullOrEmpty(error)) ErrorMessage = error;
         }
 
-        void OnDestroy()
-        {
+        void OnDestroy(){
             GameEvents.onHideUI.Remove(OnHideGUI);
             GameEvents.onShowUI.Remove(OnShowGUI);
             GameEvents.onGUIApplicationLauncherReady.Remove(AddAppButton);
-            if (appButton != null)
-            {
+            if(appButton != null) {
                 ApplicationLauncher.Instance.RemoveModApplication(appButton);
             }
         }
@@ -52,10 +50,8 @@ namespace ResonantMod
         private void OnShowGUI() => isGUIHidden = false;
         private void ToggleGUI() => showGUI = !showGUI;
 
-        void AddAppButton()
-        {
-            if (ApplicationLauncher.Instance != null && appButton == null)
-            {
+        void AddAppButton(){
+            if(ApplicationLauncher.Instance != null && appButton == null){
                 Texture2D iconTexture = GameDatabase.Instance.GetTexture("ResonantMod/icon", false);
                 appButton = ApplicationLauncher.Instance.AddModApplication(
                     ToggleGUI,
@@ -72,18 +68,15 @@ namespace ResonantMod
 
         void OnGUI()
         {
-            if (showGUI && !isGUIHidden)
-            {
+            if(showGUI && !isGUIHidden){
                 windowRect = GUI.Window(9572, windowRect, DrawGUI, "ResonantMod");
 
-                if (showPlanetDropdown)
-                {
+                if(showPlanetDropdown){
                     DrawDropdown(bodyManager.Planets, ref bodyManager.SelectedBody, ref showPlanetDropdown,
                                windowRect.x + 10, windowRect.y + windowRect.height);
                 }
 
-                if (showMoonDropdown)
-                {
+                if(showMoonDropdown){
                     DrawDropdown(bodyManager.Moons, ref bodyManager.SelectedMoon, ref showMoonDropdown,
                                windowRect.x + windowRect.width / 2 + 10, windowRect.y + windowRect.height);
                 }
@@ -92,13 +85,11 @@ namespace ResonantMod
 
         void DrawGUI(int windowID)
         {
-            if (GUI.Button(new Rect(windowRect.width - 25, 2, 20, 15), "x"))
-            {
+            if(GUI.Button(new Rect(windowRect.width - 25, 2, 20, 15), "x")){
                 showGUI = false;
             }
 
-            if (GUI.Button(new Rect(windowRect.width - 50, 2, 20, 15), showDebug ? "D" : "d"))
-            {
+            if(GUI.Button(new Rect(windowRect.width - 50, 2, 20, 15), showDebug ? "D" : "d")){
                 showDebug = !showDebug;
             }
 
@@ -106,8 +97,7 @@ namespace ResonantMod
             GUI.DragWindow();
         }
 
-        void DrawMainContent()
-        {
+        void DrawMainContent(){
             float width = windowRect.width / 2 - 15;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
@@ -115,8 +105,7 @@ namespace ResonantMod
             DrawRightSection(width);
             GUILayout.EndHorizontal();
 
-            if (!string.IsNullOrEmpty(ErrorMessage))
-            {
+            if(!string.IsNullOrEmpty(ErrorMessage)){
                 GUILayout.BeginHorizontal();
                 GUILayout.Space(10);
                 GUIStyle errorStyle = new GUIStyle(GUI.skin.label) { normal = { textColor = Color.red } };
@@ -127,8 +116,7 @@ namespace ResonantMod
             GUILayout.EndVertical();
         }
 
-        void DrawRightSection(float width)
-        {
+        void DrawRightSection(float width){
 
             GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(width));
 
@@ -140,8 +128,7 @@ namespace ResonantMod
             GUILayout.Label($"Injection ΔV: {calculator.Injection} ms⁻¹");
             GUILayout.EndVertical();
 
-            if (showDebug)
-            {
+            if (showDebug){
                 GUILayout.BeginVertical(GUI.skin.box);
                 GUILayout.Label("Debug Info:", GUILayout.ExpandWidth(false));
                 GUILayout.BeginVertical(GUI.skin.box);
@@ -153,8 +140,7 @@ namespace ResonantMod
             GUILayout.EndVertical();
         }
 
-        void DrawLeftSection(float width)
-        {
+        void DrawLeftSection(float width){
             GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(width));
             GUILayout.Label("Parameters");
             DrawCelestialBodySelection(width);
@@ -163,28 +149,23 @@ namespace ResonantMod
             GUILayout.EndVertical();
         }
 
-        void DrawCelestialBodySelection(float width)
-        {
+        void DrawCelestialBodySelection(float width){
             GUILayout.BeginVertical(GUI.skin.box);
             GUILayout.Label("Select a body:");
             GUILayout.BeginHorizontal();
 
-            if (GUILayout.Button(bodyManager.SelectedBody?.bodyName ?? "Select Body",
-                GUILayout.Width(width / 2 - 10)))
-            {
+            if (GUILayout.Button(bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width(width / 2 - 10))){
                 showPlanetDropdown = !showPlanetDropdown;
                 showMoonDropdown = false;
                 ErrorMessage = string.Empty;
             }
 
-            if (bodyManager.IsMoon)
-            {
+            if(bodyManager.IsMoon){
                 string buttonText = bodyManager.Moons.Count > 0
                     ? bodyManager.SelectedMoon?.bodyName ?? "Select Moon"
                     : "No moons";
 
-                if (GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10)))
-                {
+                if(GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10))){
                     showMoonDropdown = !showMoonDropdown;
                     showPlanetDropdown = false;
                     ErrorMessage = string.Empty;
@@ -197,18 +178,16 @@ namespace ResonantMod
             bool previousIsMoon = bodyManager.IsMoon;
             bodyManager.IsMoon = GUILayout.Toggle(bodyManager.IsMoon, "Is a moon of this body");
 
-            if (bodyManager.IsMoon != previousIsMoon)
-            {
+            if(bodyManager.IsMoon != previousIsMoon){
                 showPlanetDropdown = false;
                 showMoonDropdown = false;
-                if (bodyManager.IsMoon) bodyManager.PopulateMoons();
+                if(bodyManager.IsMoon) bodyManager.PopulateMoons();
             }
 
             GUILayout.Space(8);
         }
 
-        void DrawInputFields(float width)
-        {
+        void DrawInputFields(float width){
             GUILayout.BeginVertical(GUI.skin.box);
             GUILayout.BeginHorizontal(GUILayout.Width(width - 10));
             GUILayout.Label("Altitude:", GUILayout.Width(100));
@@ -227,17 +206,14 @@ namespace ResonantMod
 
         void DrawDropdown(List<CelestialBody> bodies, ref CelestialBody selected, ref bool showDropdown, float x, float y)
         {
-            if (showDropdown)
-            {
+            if(showDropdown){
                 Rect dropdownRect = new Rect(x, y, 200, 150);
                 GUI.Box(dropdownRect, "");
                 GUILayout.BeginArea(dropdownRect);
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(140));
 
-                foreach (CelestialBody body in bodies)
-                {
-                    if (GUILayout.Button(body.bodyName))
-                    {
+                foreach(CelestialBody body in bodies){
+                    if(GUILayout.Button(body.bodyName)){
                         selected = body;
                         showDropdown = false;
                         ErrorMessage = string.Empty;
@@ -256,27 +232,23 @@ namespace ResonantMod
 
         void CalculateOrbit()
         {
-            if (!float.TryParse(altitudeText, out float altitude) || altitude < 0)
-            {
+            if(!float.TryParse(altitudeText, out float altitude) || altitude < 0){
                 ErrorMessage = "Invalid altitude value.";
                 return;
             }
 
-            if (!int.TryParse(numberOfSatsText, out int numberOfSats) || numberOfSats < 3)
-            {
+            if(!int.TryParse(numberOfSatsText, out int numberOfSats) || numberOfSats < 3){
                 ErrorMessage = "At least 3 satellites required.";
                 return;
             }
 
-            var targetBody = bodyManager.GetTargetBody();
-            if (targetBody == null)
-            {
+            CelestialBody targetBody = bodyManager.GetTargetBody();
+            if (targetBody == null){
                 ErrorMessage = "No celestial body selected.";
                 return;
             }
 
-            if (!calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error))
-            {
+            if(!calculator.CalculateOrbit(targetBody, altitude, numberOfSats, out string error)){
                 ErrorMessage = error;
             }
         }
