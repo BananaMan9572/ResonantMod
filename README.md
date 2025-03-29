@@ -17,7 +17,6 @@ Resonant Orbit Calculator is a mod for KSP that is designed to help calculate re
 2. Extract the contents of the ZIP files.
 3. Copy the `ResonantMod` folder into your KSP's `GameData` directory.
 4. Launch KSP and the mod will be available in the flight scene.
-5. 
 ## Usage
 1. **Open the Mod**:
 - In the KSP flight scene, click the mod's button in the application launcher toolbar *(looks like a planet with a constellation orbiting around it)*.
