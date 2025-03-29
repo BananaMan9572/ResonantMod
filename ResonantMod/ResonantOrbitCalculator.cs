@@ -40,7 +40,7 @@ namespace ResonantMod {
                 this.smaResonant = Math.Pow(tResonant * tResonant * gm / (4 * Math.PI * Math.PI), 1.0 / 3.0);
 
                 double rPeriapsis = rTarget;
-                double rApoapsis = 2 * this.smaResonant - rTarget;
+                double rApoapsis = (2 * this.smaResonant) - rTarget;
 
                 if(rApoapsis <= rPeriapsis) {
                     errorMessage = "Resonant orbit calculation failed. Try different parameters.";
@@ -52,7 +52,7 @@ namespace ResonantMod {
                 this.Apoapsis = (float)((rApoapsis - radius) / 1000);
 
                 // Calculate injection ΔV
-                double vPeriapsis = Math.Sqrt(gm * (2 / rPeriapsis - 1 / this.smaResonant));
+                double vPeriapsis = Math.Sqrt(gm * (((2 / rPeriapsis) - 1) / this.smaResonant));
                 double vCircular = Math.Sqrt(gm / rPeriapsis);
                 this.Injection = (float)(vPeriapsis - vCircular);
 

@@ -76,7 +76,7 @@ namespace ResonantMod {
 
                 if(this.showMoonDropdown) {
                     this.DrawDropdown(this.bodyManager.Moons, ref this.bodyManager.SelectedMoon, ref this.showMoonDropdown,
-                               this.windowRect.x + this.windowRect.width / 2 + 10, this.windowRect.y + this.windowRect.height);
+                               this.windowRect.x + (this.windowRect.width / 2) + 10, this.windowRect.y + this.windowRect.height);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace ResonantMod {
         }
 
         void DrawMainContent() {
-            float width = this.windowRect.width / 2 - 15;
+            float width = (this.windowRect.width / 2) - 15;
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             this.DrawLeftSection(width);
@@ -152,7 +152,7 @@ namespace ResonantMod {
             GUILayout.Label("Select a body:");
             GUILayout.BeginHorizontal();
 
-            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width(width / 2 - 10))) {
+            if(GUILayout.Button(this.bodyManager.SelectedBody?.bodyName ?? "Select Body", GUILayout.Width((width / 2) - 10))) {
                 this.showPlanetDropdown = !this.showPlanetDropdown;
                 this.showMoonDropdown = false;
                 this.ErrorMessage = string.Empty;
@@ -163,7 +163,7 @@ namespace ResonantMod {
                     ? this.bodyManager.SelectedMoon?.bodyName ?? "Select Moon"
                     : "No moons";
 
-                if(GUILayout.Button(buttonText, GUILayout.Width(width / 2 - 10))) {
+                if(GUILayout.Button(buttonText, GUILayout.Width((width / 2) - 10))) {
                     this.showMoonDropdown = !this.showMoonDropdown;
                     this.showPlanetDropdown = false;
                     this.ErrorMessage = string.Empty;
