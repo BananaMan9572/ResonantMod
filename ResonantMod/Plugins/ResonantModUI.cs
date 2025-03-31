@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using KSP.UI.Screens;
+using ResonantMod.GhostMarker;
 using UnityEngine;
 
 namespace ResonantMod.Plugins {
     [KSPAddon(KSPAddon.Startup.FlightEditorAndKSC, false)]
     internal class ResonantModUI : MonoBehaviour {
+        // Managers
         private readonly ResonantOrbitCalculator calculator = new ResonantOrbitCalculator();
         private readonly CelestialBodyManager bodyManager = new CelestialBodyManager();
+        private readonly GhostShipManager ghostManager = new GhostShipManager();
 
         // UI Elements
         private ApplicationLauncherButton appButton;
@@ -86,6 +89,10 @@ namespace ResonantMod.Plugins {
 
             if(GUI.Button(new Rect(this.windowRect.width - 50, 2, 20, 15), this.showDebug ? "D" : "d")) {
                 this.showDebug = !this.showDebug;
+            }
+
+            if(GUI.Button(new Rect(this.windowRect.width - 75, 2, 20, 15), "G")) {
+                this.AddGhost();
             }
 
             this.DrawMainContent();
@@ -225,6 +232,16 @@ namespace ResonantMod.Plugins {
             }
         }
 
+        void AddGhost() {
+            Orbit orbit = new Orbit(0.0, 0.0, this.calculator.smaTarget, 0.0, 0.0, 0.0, Planetarium.GetUniversalTime(), this.bodyManager.SelectedBody);
+
+            this.ghostManager.CreateGhostShip(orbit, out string error);
+            
+            if(!string.IsNullOrEmpty(error))
+                this.ErrorMessage = error;
+            
+
+        }
         void CalculateOrbit() {
             if(!float.TryParse(this.altitudeText, out float altitude) || altitude < 0) {
                 this.ErrorMessage = "Invalid altitude value.";

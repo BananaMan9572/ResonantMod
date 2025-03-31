@@ -5,7 +5,9 @@ namespace ResonantMod.Plugins {
         public float Periapsis { get; private set; }
         public float Apoapsis { get; private set; }
         public float Injection { get; private set; }
-        private double smaResonant;
+        public double smaResonant { get; private set; }
+
+        public double smaTarget { get; private set; }
 
         public bool CalculateOrbit(CelestialBody body, float altitudeKm, int numberOfSats, out string errorMessage) {
             errorMessage = string.Empty;
@@ -14,6 +16,8 @@ namespace ResonantMod.Plugins {
             this.Periapsis = 0;
             this.Apoapsis = 0;
             this.Injection = 0;
+
+            smaTarget = altitudeKm; // Technically add both and divide by two, but in perfectly circular it stays the same.
 
             if(body == null) {
                 errorMessage = "No celestial body selected.";
